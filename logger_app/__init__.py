@@ -3,8 +3,8 @@
 # @Author   : binger
 
 name = "logger_app"
-version_info = (0, 0, 1, 20020711)
+version_info = (0, 0, 1, 20020712)
 __version__ = ".".join([str(v) for v in version_info])
 __description__ = '实现对logging的简单扩展'
 
-from .model import LoggerApply, register_formatter_tag_mapper, FormatterRule
+from .model import LoggerApp, register_formatter_tag_mapper, FormatterRule

@@ -85,7 +85,7 @@ def load_styles():
     return list(logging._STYLES.keys())
 
 
-class LoggerApply(object):
+class LoggerApp(object):
     def __init__(self, name, enable_console=True, fmt=None):
         self.name = name
         self._enable_console = enable_console

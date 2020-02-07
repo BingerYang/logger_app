@@ -1,10 +1,10 @@
-logger_apply
-============
+logger_app
+==========
 
 Documentation
 -------------
 
-The documentation is hosted at https://github.com/BingerYang/logger_apply
+The documentation is hosted at https://github.com/BingerYang/logger_app
 
 
 Installation
@@ -12,7 +12,7 @@ Installation
 
 .. code:: shell
 
-     pip install logger_apply
+     pip install logger_app
 
 Usage
 -----
@@ -24,7 +24,7 @@ example:
 
     # -*- coding: utf-8 -*-
 
-    from logger_apply import FormatterRule, LoggerApply
+    from logger_app import FormatterRule, LoggerApp
     from flask import request, Flask
 
     app = Flask(__name__)
@@ -42,7 +42,7 @@ example:
 
 
     if __name__ == '__main__':
-        app.logger = LoggerApply(__name__, fmt=FormatterRule(style='json')).create_logger()
+        app.logger = LoggerApp(__name__, fmt=FormatterRule(style='json')).create_logger()
 
         app.run(debug=True)
 
