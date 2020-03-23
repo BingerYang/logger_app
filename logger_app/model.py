@@ -86,12 +86,12 @@ def load_styles():
 
 
 class LoggerApp(object):
-    def __init__(self, name, enable_console=True, fmt=None):
+    def __init__(self, name, level="INFO", enable_console=True, fmt=None):
         self.name = name
         self._enable_console = enable_console
         self._default_global_level = "DEBUG"
         self._console_fmt = '%(asctime)s.%(msecs)03d:%(filename)-12s[%(lineno)4d] %(levelname)-6s %(message)s'
-        self.default_level = "WARN"
+        self.default_level = level
         self.fmt = fmt
 
     @property
