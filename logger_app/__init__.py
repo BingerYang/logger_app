@@ -3,7 +3,7 @@
 # @Author   : binger
 
 name = "logger_app"
-version_info = (0, 0, 1, 20032317)
+version_info = (0, 0, 1, 20032618)
 __version__ = ".".join([str(v) for v in version_info])
 __description__ = '实现对logging的简单扩展'
 
