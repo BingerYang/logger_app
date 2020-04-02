@@ -39,14 +39,15 @@ class FormatterRule(logging.Formatter):  # 自定义格式化类
     """重新实现日志输出规则工厂"""
     CB_TAG_MAP = {}
 
-    def __init__(self, fmt=None, datefmt=None, style='%'):
+    def __init__(self, fmt=None, datefmt=None, style='%', cb_tag_map=None):
+        self._cb_tag_map = cb_tag_map or self.CB_TAG_MAP
         if style != "json":
-            field = ' '.join(list(map(lambda s: '%({})-2s'.format(s), self.CB_TAG_MAP.keys())))
+            field = ' '.join(list(map(lambda s: '%({})-2s'.format(s), self._cb_tag_map.keys())))
             fmt = fmt or '%(asctime)s.%(msecs)03d:{} %(filename)-12s[%(lineno)4d] %(levelname)-6s %(message)s'.format(
                 field)
         else:
             fmt = {"asctime", "msecs", "filename", "lineno", "levelname", "message"}
-            fmt.update(self.CB_TAG_MAP.keys())
+            fmt.update(self._cb_tag_map.keys())
         # datefmt = '%Y-%m-%d %H:%M:%S'
         self.__fmt_style = style
         super(FormatterRule, self).__init__(fmt, datefmt, style)
@@ -54,7 +55,7 @@ class FormatterRule(logging.Formatter):  # 自定义格式化类
     def format(self, record):
         """每次生成日志时都会调用, 该方法主要用于设置自定义的日志信息
         :param record 日志信息"""
-        for tag, cb in self.CB_TAG_MAP.items():
+        for tag, cb in self._cb_tag_map.items():
             setattr(record, tag, cb())
 
         if self.__fmt_style != "json":
@@ -93,6 +94,12 @@ class LoggerApp(object):
         self._console_fmt = '%(asctime)s.%(msecs)03d:%(filename)-12s[%(lineno)4d] %(levelname)-6s %(message)s'
         self.default_level = level
         self.fmt = fmt
+
+        self._logger = logging.getLogger(self.name)
+
+    @property
+    def logger(self):
+        return self._logger
 
     @property
     def enable_console(self):
@@ -150,7 +157,7 @@ class LoggerApp(object):
     def _create_logger(self, file_handler, fmt=None):
         """配置 日志"""
         # 创建flask.app日志器
-        flask_logger = logging.getLogger(self.name)
+        flask_logger = self.logger
         # 设置全局级别
         flask_logger.setLevel(self._default_global_level)
 
