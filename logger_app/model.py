@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # @Time     : 2020-02-06 15:34
 # @Author   : binger
 import json
@@ -10,7 +10,7 @@ from funcy import project
 class JsonStyle(object):
     """自定义 json 格式数去规则 """
     TO_STR = lambda info: json.dumps(info, separators=(",", ":"), ensure_ascii=False)
-    default_format = ('message',)
+    default_format = 'message'
     asctime_format = 'asctime'
     asctime_search = 'asctime'
 
@@ -87,13 +87,13 @@ def load_styles():
 
 
 class LoggerApp(object):
-    def __init__(self, name, level="INFO", enable_console=True, fmt=None):
+    def __init__(self, name, level="INFO", enable_console=True, fmt_rule=None):
         self.name = name
         self._enable_console = enable_console
         self._default_global_level = "DEBUG"
         self._console_fmt = '%(asctime)s.%(msecs)03d:%(filename)-12s[%(lineno)4d] %(levelname)-6s %(message)s'
         self.default_level = level
-        self.fmt = fmt
+        self.fmt_rule = fmt_rule
 
         self._logger = logging.getLogger(self.name)
 
@@ -122,7 +122,7 @@ class LoggerApp(object):
                                            backupCount=backupCount,
                                            encoding=None, delay=False)  # 转存文件处理器  当达到限定的文件大小时, 可以将日志转存到其他文件中
 
-        return self._create_logger(file_handler, self.fmt)
+        return self._create_logger(file_handler, self.fmt_rule)
 
     def rotating_by_time(self, filename=None, when='d', interval=1, backupCount=0, encoding=None, delay=False,
                          utc=False,
@@ -146,28 +146,28 @@ class LoggerApp(object):
                                                 delay=delay,
                                                 atTime=atTime,
                                                 utc=utc)
-        return self._create_logger(file_handler, self.fmt)
+        return self._create_logger(file_handler, self.fmt_rule)
 
-    def create_logger(self, is_time_rotating=False):
-        if is_time_rotating:
-            return self.rotating_by_time()
-        else:
-            return self.rotating_by_size()
+    def create_logger(self, file_handler=None, fmt_rule=None):
+        return self._create_logger(file_handler, fmt_rule)
 
-    def _create_logger(self, file_handler, fmt=None):
+    def _create_logger(self, file_handler=None, fmt_rule=None):
         """配置 日志"""
         # 创建flask.app日志器
         flask_logger = self.logger
         # 设置全局级别
         flask_logger.setLevel(self._default_global_level)
 
+        fmt_rule = fmt_rule or self.fmt_rule
         if self._enable_console:
             # 创建控制台处理器
             console_handler = logging.StreamHandler()
 
             # 给处理器设置输出格式
-            console_formatter = logging.Formatter(fmt=self._console_fmt)
-            console_handler.setFormatter(console_formatter)
+            _fmt_rule = fmt_rule or FormatterRule(fmt=self._console_fmt)
+            # console_formatter = logging.Formatter(fmt=self._console_fmt)
+            console_handler.setFormatter(_fmt_rule)
+            console_handler.setLevel(self.default_level)
 
             # 日志器添加处理器
             flask_logger.addHandler(console_handler)
@@ -176,12 +176,13 @@ class LoggerApp(object):
         # file_handler = RotatingFileHandler(filename='flask.log', maxBytes=100 * 1024 * 1024,
         #                                    backupCount=10)  # 转存文件处理器  当达到限定的文件大小时, 可以将日志转存到其他文件中
 
-        # 给处理器设置输出格式
-        file_formatter = fmt or FormatterRule()
-        file_handler.setFormatter(fmt=file_formatter)
-        # 单独设置文件处理器的日志级别
-        file_handler.setLevel(self.default_level)
+        if file_handler:
+            # 给处理器设置输出格式
+            file_formatter = fmt_rule or FormatterRule()
+            file_handler.setFormatter(fmt=file_formatter)
+            # 单独设置文件处理器的日志级别
+            file_handler.setLevel(self.default_level)
 
-        # 日志器添加处理器
-        flask_logger.addHandler(file_handler)
+            # 日志器添加处理器
+            flask_logger.addHandler(file_handler)
         return flask_logger

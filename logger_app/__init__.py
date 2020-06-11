@@ -1,9 +1,9 @@
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 # @Time     : 2020-02-07 11:26
 # @Author   : binger
 
 name = "logger_app"
-version_info = (0, 0, 1, 20040217)
+version_info = (0, 0, 1, 20061114)
 __version__ = ".".join([str(v) for v in version_info])
 __description__ = '实现对logging的简单扩展'
 
