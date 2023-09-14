@@ -35,6 +35,11 @@ class JsonStyle(object):
 logging._STYLES["json"] = (JsonStyle, '{"levelname": levelname, "message":message}')
 
 
+def load_styles():
+    """获取日志风格"""
+    return list(logging._STYLES.keys())
+
+
 class FormatterRule(logging.Formatter):  # 自定义格式化类
     """重新实现日志输出规则工厂"""
     CB_TAG_MAP = {}
@@ -79,11 +84,6 @@ class FormatterRule(logging.Formatter):  # 自定义格式化类
 def register_formatter_tag_mapper(mapper):
     """注册日志输出格式标识"""
     FormatterRule.CB_TAG_MAP = mapper
-
-
-def load_styles():
-    """获取日志风格"""
-    return list(logging._STYLES.keys())
 
 
 class LoggerApp(object):
